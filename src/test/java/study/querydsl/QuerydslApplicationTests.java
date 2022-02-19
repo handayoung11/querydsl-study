@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import study.querydsl.entity.QTestEntity;
-import study.querydsl.entity.TestEntity;
+import study.querydsl.entity.Club;
+import study.querydsl.entity.QClub;
 
 import javax.persistence.EntityManager;
 
@@ -20,17 +20,17 @@ class QuerydslApplicationTests {
 
 	@Test
 	void contextLoads() {
-		TestEntity t = new TestEntity();
-		em.persist(t);
+		Club club = new Club("programming");
+		em.persist(club);
 
 		JPAQueryFactory jpa = new JPAQueryFactory(em);
 
-		TestEntity result = jpa.selectFrom(QTestEntity.testEntity)
-				.where(QTestEntity.testEntity.id.eq(t.getId()))
+		Club result = jpa.selectFrom(QClub.club)
+				.where(QClub.club.id.eq(club.getId()))
 				.fetchOne();
 
-		assertThat(result).isEqualTo(t);
-		assertThat(result.getId()).isEqualTo(t.getId());
+		assertThat(result).isEqualTo(club);
+		assertThat(result.getId()).isEqualTo(club.getId());
 	}
 
 }
