@@ -11,6 +11,7 @@ import study.querydsl.entity.QClub;
 import study.querydsl.entity.Student;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,4 +53,12 @@ class QuerydslApplicationTests {
 		assertThat(result.getId()).isEqualTo(club.getId());
 	}
 
+	@Test
+	void JPQLTest() {
+		List<Student> codeMania = em.createQuery("select s from Student s where s.name = :name", Student.class)
+				.setParameter("name", "code-mania")
+				.getResultList();
+
+		assertThat(codeMania.size() > 0).isTrue();
+	}
 }
