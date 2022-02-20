@@ -42,7 +42,7 @@ class QuerydslApplicationTests {
 	}
 
 	@Test
-	void contextLoads() {
+	void selectClub() {
 		Club club = new Club("programming");
 		em.persist(club);
 
