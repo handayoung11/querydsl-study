@@ -14,12 +14,15 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static study.querydsl.entity.QStudent.student;
 
 @Transactional
 @SpringBootTest
 class QuerydslApplicationTests {
 	@Autowired
 	EntityManager em;
+	JPAQueryFactory queryFactory;
+
 	@BeforeEach
 	public void before() {
 		queryFactory =  new JPAQueryFactory(em);
@@ -58,6 +61,16 @@ class QuerydslApplicationTests {
 		List<Student> codeMania = em.createQuery("select s from Student s where s.name = :name", Student.class)
 				.setParameter("name", "code-mania")
 				.getResultList();
+
+		assertThat(codeMania.size() > 0).isTrue();
+	}
+
+	@Test
+	void dslTest() {
+		List<Student> codeMania = queryFactory.select(student)
+				.from(student)
+				.where(student.name.eq("code-mania"))
+				.fetch();
 
 		assertThat(codeMania.size() > 0).isTrue();
 	}
