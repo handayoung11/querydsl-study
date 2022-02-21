@@ -74,4 +74,22 @@ class QuerydslApplicationTests {
 
 		assertThat(codeMania.size() > 0).isTrue();
 	}
+
+	@Test
+	void search() {
+		List<Student> students = queryFactory.selectFrom(student)
+				.where(student.grade.eq(2)
+						.and(student.name.eq("code-lover")))
+				.fetch();
+		assertThat(students.get(0).getName()).isEqualTo("code-lover");
+	}
+
+	@Test
+	void searchAndParam() {
+		List<Student> students = queryFactory.selectFrom(student)
+				.where(student.grade.eq(2),
+						student.name.eq("code-lover"))
+				.fetch();
+		assertThat(students.get(0).getName()).isEqualTo("code-lover");
+	}
 }
