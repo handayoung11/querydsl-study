@@ -42,7 +42,7 @@ class QuerydslApplicationTests {
 	}
 
 	@Test
-	void selectClub() {
+	public void selectClub() {
 		Club club = new Club("programming");
 		em.persist(club);
 
@@ -57,7 +57,7 @@ class QuerydslApplicationTests {
 	}
 
 	@Test
-	void JPQLTest() {
+	public void JPQLTest() {
 		List<Student> codeMania = em.createQuery("select s from Student s where s.name = :name", Student.class)
 				.setParameter("name", "code-mania")
 				.getResultList();
@@ -66,7 +66,7 @@ class QuerydslApplicationTests {
 	}
 
 	@Test
-	void dslTest() {
+	public void dslTest() {
 		List<Student> codeMania = queryFactory.select(student)
 				.from(student)
 				.where(student.name.eq("code-mania"))
