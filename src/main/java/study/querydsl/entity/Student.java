@@ -25,6 +25,7 @@ public class Student {
     public Student(String name, int grade, int age, Club club) {
         this.name = name;
         this.grade = grade;
+        this.age = age;
         if(club != null) {
             joinClub(club);
         }
