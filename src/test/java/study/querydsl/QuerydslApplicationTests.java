@@ -121,4 +121,36 @@ class QuerydslApplicationTests {
 		long count = selectStudent.fetchCount();
 		assertThat(count >= 4).isTrue();
 	}
+
+	/**
+	 * 회원 정렬
+	 * 1. 회원 나이 내림차순(desc)
+	 * 2. 회원 이름 올림차순(asc)
+	 * 단, 회원 이름이 없으면 마지막에 출력(nulls last)
+	 */
+	@Test
+	public void sort() {
+		Student s1 = new Student(null, 4, 26, null);
+		Student s2 = new Student("student2", 4, 26, null);
+		Student s3 = new Student("student3", 4, 26, null);
+		em.persist(s1);
+		em.persist(s2);
+		em.persist(s3);
+
+		System.out.println("id: " + s1.getId());
+		System.out.println("id: " + s2.getId());
+		System.out.println("id: " + s3.getId());
+		List<Student> students = queryFactory.selectFrom(student)
+				.where(student.id.in(s1.getId(), s2.getId(), s3.getId()))
+				.orderBy(student.age.desc(), student.name.asc().nullsLast())
+				.fetch();
+
+		Student first = students.get(0);
+		Student second = students.get(1);
+		Student third = students.get(2);
+
+		assertThat(first.getName()).isEqualTo("student2");
+		assertThat(second.getName()).isEqualTo("student3");
+		assertThat(third.getName()).isEqualTo(null);
+	}
 }
