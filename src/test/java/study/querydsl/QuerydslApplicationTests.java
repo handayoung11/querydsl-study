@@ -1,6 +1,9 @@
 package study.querydsl;
 
+import com.querydsl.core.QueryResults;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import study.querydsl.entity.QClub;
 import study.querydsl.entity.Student;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,5 +95,30 @@ class QuerydslApplicationTests {
 						student.name.eq("code-lover"))
 				.fetch();
 		assertThat(students.get(0).getName()).isEqualTo("code-lover");
+	}
+
+	@Test
+	public void fetchTest() {
+		JPAQuery<Student> selectStudent = queryFactory
+				.selectFrom(student);
+
+		List<Student> fetch = selectStudent.fetch();
+		assertThat(fetch.size() == 4).isTrue();
+
+		Assertions.assertThatThrownBy(() -> selectStudent.fetchOne())
+				.hasCauseInstanceOf(NonUniqueResultException.class);
+
+		Student fetchFirst = selectStudent.fetchFirst();
+		assertThat(fetch.get(0)).isEqualTo(fetchFirst);
+
+		QueryResults<Student> fetchResults = selectStudent.offset(2).limit(2).fetchResults();
+		List<Student> pagedStudents = fetchResults.getResults();
+		assertThat(pagedStudents.size() == 2).isTrue();
+		assertThat(fetchResults.getLimit() == 2).isTrue();
+		assertThat(fetchResults.getOffset() == 2).isTrue();
+		assertThat(fetchResults.getTotal() >= 4).isTrue();
+
+		long count = selectStudent.fetchCount();
+		assertThat(count >= 4).isTrue();
 	}
 }
