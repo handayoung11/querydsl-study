@@ -15,6 +15,7 @@ import study.querydsl.entity.Student;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,23 +27,31 @@ class QuerydslApplicationTests {
 	@Autowired
 	EntityManager em;
 	JPAQueryFactory queryFactory;
+	Student cMania, cLover, bMania, bLover;
+	Club programming, basket;
+	List<Long> studentIds = new ArrayList<>();
 
 	@BeforeEach
 	public void before() {
 		queryFactory =  new JPAQueryFactory(em);
-		Club programming = new Club("programming"),
-				basket = new Club("basket");
+		programming = new Club("programming");
+		basket = new Club("basket");
 		em.persist(programming);
 		em.persist(basket);
 
-		Student cMania = new Student("code-mania", 1, 20, programming),
-				cLover = new Student("code-lover", 2, 21, programming),
-				bMania = new Student("basket-mania", 1, 20, programming),
-				bLover = new Student("basket-lover", 2, 21, programming);
+		cMania = new Student("code-mania", 1, 20, programming);
+		cLover = new Student("code-lover", 2, 21, programming);
+		bMania = new Student("basket-mania", 1, 20, basket);
+		bLover = new Student("basket-lover", 2, 21, basket);
 		em.persist(cMania);
 		em.persist(cLover);
 		em.persist(bMania);
 		em.persist(bLover);
+
+		studentIds.add(cMania.getId());
+		studentIds.add(cLover.getId());
+		studentIds.add(bMania.getId());
+		studentIds.add(bLover.getId());
 	}
 
 	@Test
