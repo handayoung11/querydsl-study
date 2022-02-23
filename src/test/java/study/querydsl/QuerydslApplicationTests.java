@@ -162,4 +162,16 @@ class QuerydslApplicationTests {
 		assertThat(second.getName()).isEqualTo("student3");
 		assertThat(third.getName()).isEqualTo(null);
 	}
+
+	@Test
+	public void paging() {
+		List<Student> result = queryFactory
+				.selectFrom(student)
+				.orderBy(student.name.desc())
+				.offset(1)
+				.limit(2)
+				.fetch();
+
+		assertThat(result.size()).isEqualTo(2);
+	}
 }
