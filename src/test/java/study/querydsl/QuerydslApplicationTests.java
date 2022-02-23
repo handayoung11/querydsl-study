@@ -120,13 +120,6 @@ class QuerydslApplicationTests {
 		Student fetchFirst = selectStudent.fetchFirst();
 		assertThat(fetch.get(0)).isEqualTo(fetchFirst);
 
-		QueryResults<Student> fetchResults = selectStudent.offset(2).limit(2).fetchResults();
-		List<Student> pagedStudents = fetchResults.getResults();
-		assertThat(pagedStudents.size() == 2).isTrue();
-		assertThat(fetchResults.getLimit() == 2).isTrue();
-		assertThat(fetchResults.getOffset() == 2).isTrue();
-		assertThat(fetchResults.getTotal() >= 4).isTrue();
-
 		long count = selectStudent.fetchCount();
 		assertThat(count >= 4).isTrue();
 	}
@@ -173,5 +166,18 @@ class QuerydslApplicationTests {
 				.fetch();
 
 		assertThat(result.size()).isEqualTo(2);
+	}
+
+	@Test
+	public void pagingWithTotal() {
+		QueryResults<Student> fetchResults = queryFactory
+				.selectFrom(student)
+				.offset(2).limit(2)
+				.fetchResults();
+		List<Student> pagedStudents = fetchResults.getResults();
+		assertThat(pagedStudents.size() == 2).isTrue();
+		assertThat(fetchResults.getLimit() == 2).isTrue();
+		assertThat(fetchResults.getOffset() == 2).isTrue();
+		assertThat(fetchResults.getTotal() >= 4).isTrue();
 	}
 }
