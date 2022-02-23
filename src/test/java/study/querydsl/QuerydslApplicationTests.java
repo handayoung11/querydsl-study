@@ -1,6 +1,7 @@
 package study.querydsl;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
@@ -179,5 +180,20 @@ class QuerydslApplicationTests {
 		assertThat(fetchResults.getLimit() == 2).isTrue();
 		assertThat(fetchResults.getOffset() == 2).isTrue();
 		assertThat(fetchResults.getTotal() >= 4).isTrue();
+	}
+
+	@Test
+	public void statistics() {
+		Tuple tuple = queryFactory.select(
+				student.count(),
+						student.age.sum(),
+						student.age.avg(),
+						student.age.max(),
+						student.age.min())
+				.from(student)
+				.fetchOne();
+		assertThat(tuple.get(student.count()) >= 4).isTrue();
+		assertThat(tuple.get(student.age.avg()) > tuple.get(student.age.min())
+				&& tuple.get(student.age.avg()) < tuple.get(student.age.max())).isTrue();
 	}
 }
