@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static study.querydsl.entity.QClub.*;
 import static study.querydsl.entity.QStudent.student;
 
 @Transactional
@@ -195,5 +196,29 @@ class QuerydslApplicationTests {
 		assertThat(tuple.get(student.count()) >= 4).isTrue();
 		assertThat(tuple.get(student.age.avg()) > tuple.get(student.age.min())
 				&& tuple.get(student.age.avg()) < tuple.get(student.age.max())).isTrue();
+	}
+
+	/**
+	 * 팀의 이름과 각 팀의 평균 연령 구하기
+	 */
+	@Test
+	public void getAgeAvgGroupByClub() {
+		List<Tuple> tuples = queryFactory
+				.select(club.name, student.age.avg())
+				.from(student)
+				.join(student.club, club)
+				.where(student.id.in(studentIds))
+				.groupBy(club.id)
+				.having(club.name.isNotEmpty())
+				.orderBy(club.name.desc())
+				.fetch();
+
+		Tuple t1 = tuples.get(0), t2 = tuples.get(1);
+
+		assertThat(t1.get(club.name)).isEqualTo(programming.getName());
+		assertThat(t1.get(student.age.avg())).isEqualTo(20.5); // (20 + 21) / 2
+
+		assertThat(t2.get(club.name)).isEqualTo(basket.getName());
+		assertThat(t2.get(student.age.avg())).isEqualTo(20.5); // (20 + 21) / 2
 	}
 }
