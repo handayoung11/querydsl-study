@@ -221,4 +221,18 @@ class QuerydslApplicationTests {
 		assertThat(t2.get(club.name)).isEqualTo(basket.getName());
 		assertThat(t2.get(student.age.avg())).isEqualTo(20.5); // (20 + 21) / 2
 	}
+
+	/**
+	 * programming club에 소속된 모든 학생 조회
+	 */
+	@Test
+	public void join() {
+		List<Student> students = queryFactory
+				.selectFrom(student)
+				.join(student.club, club)
+				.where(club.id.eq(programming.getId()))
+				.fetch();
+
+		assertThat(students).contains(cMania, cLover);
+	}
 }
