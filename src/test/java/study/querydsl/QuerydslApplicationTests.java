@@ -235,4 +235,23 @@ class QuerydslApplicationTests {
 
 		assertThat(students).contains(cMania, cLover);
 	}
+
+	/**
+	 * 학생의 이름이 클럽명과 같은 student 조회
+	 */
+	@Test
+	public void thetaJoin() {
+		em.persist(new Student(basket.getName(), 2, 21, basket));
+		em.persist(new Student(programming.getName(), 2, 21, programming));
+
+		List<Student> students = queryFactory
+				.select(student)
+				.from(student, club)
+				.where(student.name.eq(club.name))
+				.fetch();
+
+		assertThat(students)
+				.extracting("name")
+				.containsExactly(basket.getName(), programming.getName());
+	}
 }
