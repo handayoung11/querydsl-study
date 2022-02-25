@@ -32,6 +32,7 @@ class QuerydslApplicationTests {
 	Student cMania, cLover, bMania, bLover;
 	Club programming, basket;
 	List<Long> studentIds = new ArrayList<>();
+	int size;
 
 	@BeforeEach
 	public void before() {
@@ -54,6 +55,7 @@ class QuerydslApplicationTests {
 		studentIds.add(cLover.getId());
 		studentIds.add(bMania.getId());
 		studentIds.add(bLover.getId());
+		size = studentIds.size();
 	}
 
 	@Test
@@ -123,7 +125,7 @@ class QuerydslApplicationTests {
 		assertThat(fetch.get(0)).isEqualTo(fetchFirst);
 
 		long count = selectStudent.fetchCount();
-		assertThat(count >= 4).isTrue();
+		assertThat(count >= size).isTrue();
 	}
 
 	/**
@@ -180,7 +182,7 @@ class QuerydslApplicationTests {
 		assertThat(pagedStudents.size() == 2).isTrue();
 		assertThat(fetchResults.getLimit() == 2).isTrue();
 		assertThat(fetchResults.getOffset() == 2).isTrue();
-		assertThat(fetchResults.getTotal() >= 4).isTrue();
+		assertThat(fetchResults.getTotal() >= size).isTrue();
 	}
 
 	@Test
@@ -193,7 +195,7 @@ class QuerydslApplicationTests {
 						student.age.min())
 				.from(student)
 				.fetchOne();
-		assertThat(tuple.get(student.count()) >= 4).isTrue();
+		assertThat(tuple.get(student.count()) >= size).isTrue();
 		assertThat(tuple.get(student.age.avg()) > tuple.get(student.age.min())
 				&& tuple.get(student.age.avg()) < tuple.get(student.age.max())).isTrue();
 	}
