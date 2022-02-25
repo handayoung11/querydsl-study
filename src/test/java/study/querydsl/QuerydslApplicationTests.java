@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QClub.*;
@@ -274,5 +275,30 @@ class QuerydslApplicationTests {
 		}
 
 		assertThat(tuples.size() >= size);
+	}
+
+	/**
+	 * 학생의 이름이 클럽명과 같은 student 조회
+	 * join ... on 사용
+	 */
+	@Test
+	public void thetaJoinOn() {
+		em.persist(new Student(basket.getName(), 2, 21, basket));
+		em.persist(new Student(programming.getName(), 2, 21, programming));
+
+		List<Tuple> students = queryFactory
+				.select(student, club)
+				.from(student)
+				.join(club)
+				.on(student.name.eq(club.name))
+				.where(club.id.in(programming.getId(), basket.getId()))
+				.fetch();
+
+		for (Tuple t : students) {
+			System.out.println("t = " + t);
+		}
+
+		List<String> names = students.stream().map(s -> s.get(0, Student.class).getName()).collect(Collectors.toList());
+		assertThat(names).containsOnly(basket.getName(), programming.getName());
 	}
 }
