@@ -256,4 +256,23 @@ class QuerydslApplicationTests {
 				.extracting("name")
 				.containsExactly(basket.getName(), programming.getName());
 	}
+
+	/**
+	 * Student와 Club JOIN, Club은 programming인 Club만 조회, Student는 모두 조회
+	 */
+	@Test
+	public void joinOn() {
+		List<Tuple> tuples = queryFactory
+				.select(student, club)
+				.from(student)
+				.leftJoin(student.club, club)
+				.on(club.id.eq(programming.getId()))
+				.fetch();
+
+		for (Tuple t : tuples) {
+			System.out.println(t);
+		}
+
+		assertThat(tuples.size() >= size);
+	}
 }
