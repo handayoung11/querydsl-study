@@ -29,7 +29,10 @@ import static study.querydsl.entity.QStudent.student;
 class QuerydslApplicationTests {
 	@Autowired
 	EntityManager em;
+	@PersistenceUnit
+	EntityManagerFactory emf;
 	JPAQueryFactory queryFactory;
+
 	Student cMania, cLover, bMania, bLover;
 	Club programming, basket;
 	List<Long> studentIds = new ArrayList<>();
@@ -300,5 +303,22 @@ class QuerydslApplicationTests {
 
 		List<String> names = students.stream().map(s -> s.get(0, Student.class).getName()).collect(Collectors.toList());
 		assertThat(names).containsOnly(basket.getName(), programming.getName());
+	}
+
+	/**
+	 * fetch join을 하지 않았을 때
+	 * Student의 연관엔티인 club의 loading 상태확인
+	 */
+	@Test
+	public void findStudent() {
+		em.flush();
+		em.clear();
+
+		Student findStudent = queryFactory.selectFrom(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findStudent.getClub());
+		assertThat(loaded).isFalse();
 	}
 }
