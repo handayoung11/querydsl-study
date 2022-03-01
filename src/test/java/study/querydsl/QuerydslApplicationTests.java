@@ -124,7 +124,7 @@ class QuerydslApplicationTests {
 		List<Student> fetch = selectStudent.fetch();
 		assertThat(fetch.size() == 4).isTrue();
 
-		Assertions.assertThatThrownBy(() -> selectStudent.fetchOne())
+		Assertions.assertThatThrownBy(selectStudent::fetchOne)
 				.hasCauseInstanceOf(NonUniqueResultException.class);
 
 		Student fetchFirst = selectStudent.fetchFirst();
