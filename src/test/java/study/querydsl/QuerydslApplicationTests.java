@@ -15,7 +15,9 @@ import study.querydsl.entity.QClub;
 import study.querydsl.entity.Student;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -320,5 +322,23 @@ class QuerydslApplicationTests {
 
 		boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findStudent.getClub());
 		assertThat(loaded).isFalse();
+	}
+
+	/**
+	 * fetch join을 했을 때
+	 * Student의 연관엔티인 club의 loading 상태확인
+	 */
+	@Test
+	public void fetchClubFromStudent() {
+		em.flush();
+		em.clear();
+
+		Student findStudent = queryFactory.selectFrom(student)
+				.join(student.club).fetchJoin()
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findStudent.getClub());
+		assertThat(loaded).isTrue();
 	}
 }
