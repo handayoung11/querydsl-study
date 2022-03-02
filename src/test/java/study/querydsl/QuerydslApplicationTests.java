@@ -366,4 +366,22 @@ class QuerydslApplicationTests {
 				.from(student)
 				.fetchOne();
 	}
+
+    /**
+     * 학생의 나이와 최고나이의 차를 조회
+     */
+	@Test
+	public void selectSubQuery() {
+        List<Tuple> tuples = queryFactory.select(student.name,
+                        student.age.subtract(
+                                select(student.age.max())
+										.from(student)
+                        ))
+                .from(student)
+                .fetch();
+
+        for (Tuple tuple : tuples) {
+            System.out.println("tuple = " + tuple);
+        }
+    }
 }
