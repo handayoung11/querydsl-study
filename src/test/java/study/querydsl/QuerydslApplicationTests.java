@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.entity.Club;
 import study.querydsl.entity.QClub;
+import study.querydsl.entity.QStudent;
 import study.querydsl.entity.Student;
 
 import javax.persistence.EntityManager;
@@ -22,8 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.querydsl.jpa.JPAExpressions.select;
 import static org.assertj.core.api.Assertions.assertThat;
-import static study.querydsl.entity.QClub.*;
+import static study.querydsl.entity.QClub.club;
 import static study.querydsl.entity.QStudent.student;
 
 @Transactional
@@ -340,5 +342,28 @@ class QuerydslApplicationTests {
 
 		boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findStudent.getClub());
 		assertThat(loaded).isTrue();
+	}
+
+	/**
+	 * 나이가 가장 많은 학생들 조회
+	 */
+	@Test
+	public void maxAgeSubQUery() {
+		int maxAge = getMaxAge();
+		QStudent subSt = new QStudent("subSt");
+		List<Student> students = queryFactory
+				.selectFrom(student)
+				.where(student.age.eq(
+						select(subSt.age.max())
+						.from(subSt)))
+				.fetch();
+		assertThat(students).extracting("age").containsOnly(maxAge);
+	}
+
+	private int getMaxAge() {
+		return queryFactory
+				.select(student.age.max())
+				.from(student)
+				.fetchOne();
 	}
 }
