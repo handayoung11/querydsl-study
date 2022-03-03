@@ -2,6 +2,8 @@ package study.querydsl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
@@ -399,4 +401,17 @@ class QuerydslApplicationTests {
             System.out.println("s = " + s);
         }
     }
+
+	@Test
+	public void complexCase() {
+		List<String> result = queryFactory.select(new CaseBuilder()
+						.when(student.grade.between(1, 2)).then("병아리")
+						.when(student.grade.between(3, 4)).then("닭")
+						.otherwise(""))
+				.from(student)
+				.fetch();
+		for (String s : result) {
+			System.out.println("s = " + s);
+		}
+	}
 }
