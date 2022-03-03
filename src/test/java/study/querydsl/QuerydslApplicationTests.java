@@ -426,4 +426,15 @@ class QuerydslApplicationTests {
 			System.out.println("t = " + t);
 		}
 	}
+
+	@Test
+	public void concat() {
+		String info = queryFactory
+				.select(student.name.concat("_").concat(student.age.stringValue()))
+				.from(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		assertThat(info).isEqualTo(cMania.getName() + "_" + cMania.getAge());
+	}
 }
