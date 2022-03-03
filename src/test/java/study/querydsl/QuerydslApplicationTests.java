@@ -414,4 +414,16 @@ class QuerydslApplicationTests {
 			System.out.println("s = " + s);
 		}
 	}
+
+	@Test
+	public void constant() {
+		List<Tuple> tuples = queryFactory
+				.select(student.name, Expressions.constant("test"))
+				.from(student)
+				.fetch();
+
+		for (Tuple t : tuples) {
+			System.out.println("t = " + t);
+		}
+	}
 }
