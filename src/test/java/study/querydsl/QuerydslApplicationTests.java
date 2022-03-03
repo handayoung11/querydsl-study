@@ -384,4 +384,19 @@ class QuerydslApplicationTests {
             System.out.println("tuple = " + tuple);
         }
     }
+
+	@Test
+	public void basicCase() {
+        List<String> result = queryFactory.select(student.grade
+                        .when(1).then("신입생")
+                        .when(2).then("2학년")
+                        .when(3).then("3학년")
+                        .when(4).then("졸업반")
+                        .otherwise("기타"))
+                .from(student)
+                .fetch();
+        for (String s : result) {
+            System.out.println("s = " + s);
+        }
+    }
 }
