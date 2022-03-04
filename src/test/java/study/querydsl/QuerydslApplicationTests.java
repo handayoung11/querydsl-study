@@ -437,4 +437,15 @@ class QuerydslApplicationTests {
 
 		assertThat(info).isEqualTo(cMania.getName() + "_" + cMania.getAge());
 	}
+
+	@Test
+	public void tupleProjection() {
+		Tuple tuple = queryFactory.select(student.name, student.age)
+				.from(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		assertThat(tuple.get(student.name)).isEqualTo(cMania.getName());
+		assertThat(tuple.get(student.age)).isEqualTo(cMania.getAge());
+	}
 }
