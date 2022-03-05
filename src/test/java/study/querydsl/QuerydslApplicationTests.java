@@ -448,4 +448,15 @@ class QuerydslApplicationTests {
 		assertThat(tuple.get(student.name)).isEqualTo(cMania.getName());
 		assertThat(tuple.get(student.age)).isEqualTo(cMania.getAge());
 	}
+
+	@Test
+	public void findStudentDTOByJPQL() {
+		StudentDTO dto = em.createQuery("select new study.querydsl.dto.StudentDTO(s.name, s.age) " +
+						"from Student s where s.id = :id", StudentDTO.class)
+				.setParameter("id", cMania.getId())
+				.getSingleResult();
+
+		assertThat(dto.getName()).isEqualTo(cMania.getName());
+		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
+	}
 }
