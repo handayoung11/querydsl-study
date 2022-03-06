@@ -485,4 +485,16 @@ class QuerydslApplicationTests {
 		assertThat(dto.getName()).isEqualTo(cMania.getName());
 		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
 	}
+
+	@Test
+	public void findStudentDTOByConstructor() {
+		StudentDTO dto = queryFactory.select(
+						Projections.constructor(StudentDTO.class, student.name, student.age)
+				).from(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		assertThat(dto.getName()).isEqualTo(cMania.getName());
+		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
+	}
 }
