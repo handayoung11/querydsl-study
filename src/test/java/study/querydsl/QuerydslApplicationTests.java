@@ -2,9 +2,11 @@ package study.querydsl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.StudentDTO;
+import study.querydsl.dto.StudentInfoDTO;
 import study.querydsl.entity.Club;
 import study.querydsl.entity.QClub;
 import study.querydsl.entity.QStudent;
@@ -496,5 +499,22 @@ class QuerydslApplicationTests {
 
 		assertThat(dto.getName()).isEqualTo(cMania.getName());
 		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
+	}
+
+	@Test
+	public void findStudentInfoDTOByField() {
+		StudentInfoDTO dto = queryFactory.select(
+						Projections.fields(StudentInfoDTO.class,
+								student.name.as("studentName"),
+								ExpressionUtils.as(
+										JPAExpressions.select(student.age.max())
+												.from(student), "age")
+						)
+				).from(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		assertThat(dto.getStudentName()).isEqualTo(cMania.getName());
+		assertThat(dto.getAge() >= cMania.getAge()).isTrue();
 	}
 }
