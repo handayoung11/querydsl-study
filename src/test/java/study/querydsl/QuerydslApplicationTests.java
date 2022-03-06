@@ -473,4 +473,16 @@ class QuerydslApplicationTests {
 		assertThat(dto.getName()).isEqualTo(cMania.getName());
 		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
 	}
+
+	@Test
+	public void findStudentDTOByField() {
+		StudentDTO dto = queryFactory.select(
+						Projections.fields(StudentDTO.class, student.age, student.name)
+				).from(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		assertThat(dto.getName()).isEqualTo(cMania.getName());
+		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
+	}
 }
