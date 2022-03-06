@@ -2,6 +2,7 @@ package study.querydsl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import study.querydsl.dto.StudentDTO;
 import study.querydsl.entity.Club;
 import study.querydsl.entity.QClub;
 import study.querydsl.entity.QStudent;
@@ -455,6 +457,18 @@ class QuerydslApplicationTests {
 						"from Student s where s.id = :id", StudentDTO.class)
 				.setParameter("id", cMania.getId())
 				.getSingleResult();
+
+		assertThat(dto.getName()).isEqualTo(cMania.getName());
+		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
+	}
+
+	@Test
+	public void findStudentDTOBySetter() {
+		StudentDTO dto = queryFactory.select(
+				Projections.bean(StudentDTO.class, student.age, student.name)
+				).from(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
 
 		assertThat(dto.getName()).isEqualTo(cMania.getName());
 		assertThat(dto.getAge()).isEqualTo(cMania.getAge());
