@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import study.querydsl.dto.QStudentDTO;
 import study.querydsl.dto.StudentDTO;
 import study.querydsl.dto.StudentInfoDTO;
 import study.querydsl.entity.Club;
@@ -516,5 +517,17 @@ class QuerydslApplicationTests {
 
 		assertThat(dto.getStudentName()).isEqualTo(cMania.getName());
 		assertThat(dto.getAge() >= cMania.getAge()).isTrue();
+	}
+
+	@Test
+	public void findStudentDTOByQueryProjection() {
+		StudentDTO s = queryFactory
+				.select(new QStudentDTO(student.name, student.age))
+				.from(student)
+				.where(student.id.eq(cMania.getId()))
+				.fetchOne();
+
+		assertThat(s.getName()).isEqualTo(cMania.getName());
+		assertThat(s.getAge()).isEqualTo(cMania.getAge());
 	}
 }
