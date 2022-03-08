@@ -1,5 +1,6 @@
 package study.querydsl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
@@ -529,5 +530,33 @@ class QuerydslApplicationTests {
 
 		assertThat(s.getName()).isEqualTo(cMania.getName());
 		assertThat(s.getAge()).isEqualTo(cMania.getAge());
+	}
+
+	@Test
+	public void findByNameAndAgeByBuilder() {
+		String name = cMania.getName();
+		int age = cMania.getAge();
+
+		List<Student> students = dynamicSearchStudent(name, age);
+		assertThat(students).extracting("name").containsOnly(cMania.getName());
+		assertThat(students).extracting("age").containsOnly(cMania.getAge());
+	}
+
+	private List<Student> dynamicSearchStudent(String nameCond, Integer ageCond) {
+		BooleanBuilder builder = new BooleanBuilder();
+
+		if (nameCond != null) {
+			builder.and(student.name.eq(nameCond));
+		}
+
+		if (ageCond != null) {
+			//에코스토어 섬유유연제
+			builder.and(student.age.eq(ageCond));
+		}
+
+		return queryFactory
+				.selectFrom(student)
+				.where(builder)
+				.fetch();
 	}
 }
