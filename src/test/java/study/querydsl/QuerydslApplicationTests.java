@@ -5,6 +5,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -535,7 +536,7 @@ class QuerydslApplicationTests {
 	@Test
 	public void findByNameAndAgeByBuilder() {
 		String name = cMania.getName();
-		int age = cMania.getAge();
+		Integer age = cMania.getAge();
 
 		List<Student> students = dynamicSearchStudent(name, age);
 		assertThat(students).extracting("name").containsOnly(cMania.getName());
@@ -558,5 +559,29 @@ class QuerydslApplicationTests {
 				.selectFrom(student)
 				.where(builder)
 				.fetch();
+	}
+
+	@Test
+	public void findByNameAndAgeByDynamicWhere() {
+		String name = cMania.getName();
+		Integer age = cMania.getAge();
+
+		List<Student> students = dynamicSearchStudentByWhere(name, age);
+		assertThat(students).extracting("name").containsOnly(cMania.getName());
+		assertThat(students).extracting("age").containsOnly(cMania.getAge());
+	}
+
+	private List<Student> dynamicSearchStudentByWhere(String nameCond, Integer ageCond) {
+		return queryFactory.selectFrom(student)
+				.where(nameEq(nameCond), ageEq(ageCond))
+				.fetch();
+	}
+
+	private BooleanExpression nameEq(String name) {
+		return name == null ? null : student.name.eq(name);
+	}
+
+	private BooleanExpression ageEq(Integer age) {
+		return age == null ? null : student.age.eq(age);
 	}
 }
