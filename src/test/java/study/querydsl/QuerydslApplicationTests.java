@@ -584,4 +584,23 @@ class QuerydslApplicationTests {
 	private BooleanExpression ageEq(Integer age) {
 		return age == null ? null : student.age.eq(age);
 	}
+
+	@Test
+	public void toNextGrade() {
+		long count = queryFactory.update(student)
+				.set(student.age, student.age.add(1))
+				.set(student.grade, student.grade.add(1))
+				.where(student.grade.ne(4))
+				.execute();
+
+		em.flush();
+		em.clear();
+
+		List<Student> students = queryFactory.selectFrom(QStudent.student)
+				.where(student.grade.ne(4))
+				.fetch();
+		for (Student s : students) {
+			System.out.println("s = " + s);
+		}
+	}
 }
