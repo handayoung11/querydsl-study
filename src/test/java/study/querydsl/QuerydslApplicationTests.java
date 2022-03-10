@@ -603,4 +603,11 @@ class QuerydslApplicationTests {
 			System.out.println("s = " + s);
 		}
 	}
+
+	@Test
+	public void bulkDelete() {
+		long count = queryFactory.delete(student)
+				.where(student.grade.eq(4))
+				.execute();
+	}
 }
