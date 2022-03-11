@@ -610,4 +610,16 @@ class QuerydslApplicationTests {
 				.where(student.grade.eq(4))
 				.execute();
 	}
+
+	@Test
+	public void getUpperName() {
+		List<String> names = queryFactory
+//				.select(student.name.upper())
+				.select(Expressions.stringTemplate("function('upper', {0})", student.name))
+				.from(student)
+				.fetch();
+		for (String name : names) {
+			System.out.println("name = " + name);
+		}
+	}
 }
