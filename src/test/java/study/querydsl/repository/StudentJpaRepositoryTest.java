@@ -35,4 +35,16 @@ class StudentJpaRepositoryTest {
         List<Student> studentsByName = studentJpaRepository.findByName(student.getName());
         assertThat(studentsByName).contains(student);
     }
+
+    @Test
+    public void basicDSLTest() {
+        Student student = new Student("code-mania", 1, 20, null);
+        studentJpaRepository.save(student);
+
+        List<Student> students = studentJpaRepository.findAll_DSL();
+        assertThat(students).contains(student);
+
+        List<Student> studentsByName = studentJpaRepository.findByName_DSL(student.getName());
+        assertThat(studentsByName).contains(student);
+    }
 }
