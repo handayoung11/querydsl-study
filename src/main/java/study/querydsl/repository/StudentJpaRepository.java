@@ -34,9 +34,19 @@ public class StudentJpaRepository {
                 .getResultList();
     }
 
+    public List<Student> findAll_DSL() {
+        return queryFactory.selectFrom(student).fetch();
+    }
+
     public List<Student> findByName(String name) {
         return em.createQuery("select s from Student s where s.name = :name")
                 .setParameter("name", name)
                 .getResultList();
+    }
+
+    public List<Student> findByName_DSL(String name) {
+        return queryFactory.selectFrom(student)
+                .where(student.name.eq(name))
+                .fetch();
     }
 }
