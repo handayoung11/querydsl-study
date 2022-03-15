@@ -70,7 +70,10 @@ class StudentJpaRepositoryTest {
         condition.setMaxAge(20);
         condition.setClubName(programming.getName());
 
-        List<StudentClubDTO> result = studentJpaRepository.searchByBuilder(condition);
-        assertThat(result).extracting("studentId").contains(cMania.getId());
+        List<StudentClubDTO> searchByBuilderRes = studentJpaRepository.searchByBuilder(condition);
+        assertThat(searchByBuilderRes).extracting("studentId").contains(cMania.getId());
+
+        List<StudentClubDTO> searchStudentClubDTORes = studentJpaRepository.searchStudentClubDTO(condition);
+        assertThat(searchStudentClubDTORes).extracting("studentId").contains(cMania.getId());
     }
 }
