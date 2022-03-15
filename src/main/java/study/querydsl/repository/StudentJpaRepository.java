@@ -1,6 +1,7 @@
 package study.querydsl.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -82,5 +83,58 @@ public class StudentJpaRepository {
                 .where(builder)
                 .leftJoin(student.club)
                 .fetch();
+    }
+
+    public List<StudentClubDTO> searchStudentClubDTO(StudentSearchCondition condition) {
+
+        return queryFactory
+                .select(new QStudentClubDTO(
+                        student.id.as("studentId"),
+                        student.name.as("studentName"),
+                        student.age,
+                        student.club.id.as("clubId"),
+                        student.club.name.as("clubName")
+                )).from(student)
+                .where(
+                        studentNameEq(condition.getStudentName()),
+                        clubNameEq(condition.getClubName()),
+                        ageGoe(condition.getMinAge()),
+                        ageLoe(condition.getMaxAge())
+                )
+                .leftJoin(student.club)
+                .fetch();
+    }
+
+    public List<Student> searchStudent(StudentSearchCondition condition) {
+        return queryFactory
+                .selectFrom(student)
+                .where(
+                        studentNameEq(condition.getStudentName()),
+                        clubNameEq(condition.getClubName()),
+                        ageGoe(condition.getMinAge()),
+                        ageLoe(condition.getMaxAge())
+                )
+                .leftJoin(student.club)
+                .fetch();
+    }
+
+    private BooleanExpression ageBetween(Integer minAge, Integer maxAge) {
+        return ageGoe(minAge).and(ageLoe(maxAge));
+    }
+
+    private BooleanExpression studentNameEq(String studentName) {
+        return hasText(studentName) ? student.name.eq(studentName) : null;
+    }
+
+    private BooleanExpression clubNameEq(String clubName) {
+        return hasText(clubName) ? student.club.name.eq(clubName) : null;
+    }
+
+    private BooleanExpression ageGoe(Integer minAge) {
+        return minAge != null ? student.age.goe(minAge) : null;
+    }
+
+    private BooleanExpression ageLoe(Integer maxAge) {
+        return maxAge != null ? student.age.loe(maxAge) : null;
     }
 }
