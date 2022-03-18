@@ -3,6 +3,8 @@ package study.querydsl.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.StudentClubDTO;
 import study.querydsl.dto.StudentSearchCondition;
@@ -60,8 +62,12 @@ public class StudentRepositoryTest {
         condition.setMaxAge(20);
         condition.setClubName(programming.getName());
 
-        List<StudentClubDTO> searchStudentClubDTORes = studentRepository.search(condition);
-        assertThat(searchStudentClubDTORes).extracting("studentId").contains(cMania.getId());
+//        List<StudentClubDTO> searchStudentClubDTORes = studentRepository.search(condition);
+//        assertThat(searchStudentClubDTORes).extracting("studentId").contains(cMania.getId());
+
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        Page<StudentClubDTO> result = studentRepository.searchAndPageWithCount(new StudentSearchCondition(), pageRequest);
+        assertThat(result.getSize()).isEqualTo(3);
     }
 
 }
