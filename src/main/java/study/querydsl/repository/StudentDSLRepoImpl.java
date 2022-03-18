@@ -1,9 +1,13 @@
 package study.querydsl.repository;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import study.querydsl.dto.QStudentClubDTO;
 import study.querydsl.dto.StudentClubDTO;
 import study.querydsl.dto.StudentSearchCondition;
@@ -22,6 +26,15 @@ public class StudentDSLRepoImpl implements StudentDSLRepo {
     public List<StudentClubDTO> search(StudentSearchCondition condition) {
         return searchByCondition(condition)
                 .fetch();
+    }
+
+    @Override
+    public Page<StudentClubDTO> searchAndPageWithCount(StudentSearchCondition condition, Pageable pageable) {
+        QueryResults<StudentClubDTO> result = searchByCondition(condition)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
     private JPAQuery<StudentClubDTO> searchByCondition(StudentSearchCondition condition) {
