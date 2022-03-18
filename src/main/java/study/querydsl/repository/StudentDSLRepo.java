@@ -10,4 +10,5 @@ import java.util.List;
 public interface StudentDSLRepo {
     List<StudentClubDTO> search(StudentSearchCondition condition);
     Page<StudentClubDTO> searchAndPageWithCount(StudentSearchCondition condition, Pageable pageable);
+    Page<StudentClubDTO> searchAndPageWithoutCount(StudentSearchCondition condition, Pageable pageable);
 }

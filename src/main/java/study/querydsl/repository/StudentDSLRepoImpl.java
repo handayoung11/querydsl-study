@@ -37,6 +37,24 @@ public class StudentDSLRepoImpl implements StudentDSLRepo {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
+    @Override
+    public Page<StudentClubDTO> searchAndPageWithoutCount(StudentSearchCondition condition, Pageable pageable) {
+        List<StudentClubDTO> content = searchByCondition(condition)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = queryFactory.select(student.count())
+                .from(student)
+                .where(
+                        studentNameEq(condition.getStudentName()),
+                        clubNameEq(condition.getClubName()),
+                        ageGoe(condition.getMinAge()),
+                        ageLoe(condition.getMaxAge())
+                ).fetchOne();
+        return new PageImpl<>(content, pageable, total);
+    }
+
     private JPAQuery<StudentClubDTO> searchByCondition(StudentSearchCondition condition) {
         return queryFactory
                 .select(new QStudentClubDTO(
