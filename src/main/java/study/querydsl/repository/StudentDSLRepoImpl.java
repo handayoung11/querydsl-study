@@ -1,6 +1,7 @@
 package study.querydsl.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import study.querydsl.dto.QStudentClubDTO;
@@ -19,7 +20,11 @@ public class StudentDSLRepoImpl implements StudentDSLRepo {
 
     @Override
     public List<StudentClubDTO> search(StudentSearchCondition condition) {
+        return searchByCondition(condition)
+                .fetch();
+    }
 
+    private JPAQuery<StudentClubDTO> searchByCondition(StudentSearchCondition condition) {
         return queryFactory
                 .select(new QStudentClubDTO(
                         student.id.as("studentId"),
@@ -28,14 +33,13 @@ public class StudentDSLRepoImpl implements StudentDSLRepo {
                         student.club.id.as("clubId"),
                         student.club.name.as("clubName")
                 )).from(student)
+                .leftJoin(student.club)
                 .where(
                         studentNameEq(condition.getStudentName()),
                         clubNameEq(condition.getClubName()),
                         ageGoe(condition.getMinAge()),
                         ageLoe(condition.getMaxAge())
-                )
-                .leftJoin(student.club)
-                .fetch();
+                );
     }
 
     private BooleanExpression studentNameEq(String studentName) {
