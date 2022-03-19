@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import study.querydsl.dto.QStudentClubDTO;
 import study.querydsl.dto.StudentClubDTO;
 import study.querydsl.dto.StudentSearchCondition;
@@ -44,15 +45,16 @@ public class StudentDSLRepoImpl implements StudentDSLRepo {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(student.count())
+        JPAQuery<Long> countQuery = queryFactory.select(student.count())
                 .from(student)
                 .where(
                         studentNameEq(condition.getStudentName()),
                         clubNameEq(condition.getClubName()),
                         ageGoe(condition.getMinAge()),
                         ageLoe(condition.getMaxAge())
-                ).fetchOne();
-        return new PageImpl<>(content, pageable, total);
+                );
+//        return new PageImpl<>(content, pageable, total);
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     private JPAQuery<StudentClubDTO> searchByCondition(StudentSearchCondition condition) {
