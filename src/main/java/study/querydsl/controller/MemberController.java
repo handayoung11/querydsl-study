@@ -28,4 +28,9 @@ public class MemberController {
     public Page<StudentClubDTO> searchStudentV2(StudentSearchCondition condition, Pageable pageable) {
         return studentRepository.searchAndPageWithCount(condition, pageable);
     }
+
+    @GetMapping("/v3/members")
+    public Page<StudentClubDTO> searchStudentV3(StudentSearchCondition condition, Pageable pageable) {
+        return studentRepository.searchAndPageWithoutCount(condition, pageable);
+    }
 }
