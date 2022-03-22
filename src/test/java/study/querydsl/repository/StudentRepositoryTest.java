@@ -83,7 +83,7 @@ public class StudentRepositoryTest {
         Iterable<Student> students = studentRepository.findAll(student.age.between(20, 25).and(student.name.contains("code")));
         for (Student s : students) {
             System.out.println("s = " + s);
+            assertThat(s.getName()).contains("code");
         }
-        assertThat(students).extracting("name").contains("code");
     }
 }
