@@ -1,5 +1,6 @@
 package study.querydsl.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,25 @@ public class StudentRepositoryTest {
 
     @Autowired
     StudentRepository studentRepository;
+    Club programming, basket;
+    Student cMania, cLover, bMania, bLover;
+
+    @BeforeEach
+    public void data() {
+        programming = new Club("programming");
+        basket = new Club("basket");
+        em.persist(programming);
+        em.persist(basket);
+
+        cMania = new Student("code-mania", 1, 20, programming);
+        cLover = new Student("code-lover", 2, 21, programming);
+        bMania = new Student("basket-mania", 1, 20, basket);
+        bLover = new Student("basket-lover", 2, 21, basket);
+        em.persist(cMania);
+        em.persist(cLover);
+        em.persist(bMania);
+        em.persist(bLover);
+    }
 
     @Test
     public void basicTest() {
@@ -44,20 +64,6 @@ public class StudentRepositoryTest {
 
     @Test
     public void searchTest() {
-        Club programming = new Club("programming");
-        Club basket = new Club("basket");
-        em.persist(programming);
-        em.persist(basket);
-
-        Student cMania = new Student("code-mania", 1, 20, programming);
-        Student cLover = new Student("code-lover", 2, 21, programming);
-        Student bMania = new Student("basket-mania", 1, 20, basket);
-        Student bLover = new Student("basket-lover", 2, 21, basket);
-        em.persist(cMania);
-        em.persist(cLover);
-        em.persist(bMania);
-        em.persist(bLover);
-
         StudentSearchCondition condition = new StudentSearchCondition();
         condition.setMaxAge(20);
         condition.setClubName(programming.getName());
