@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.StudentClubDTO;
 import study.querydsl.dto.StudentSearchCondition;
 import study.querydsl.entity.Club;
+import study.querydsl.entity.QStudent;
 import study.querydsl.entity.Student;
 
 import javax.persistence.EntityManager;
@@ -76,4 +77,13 @@ public class StudentRepositoryTest {
         assertThat(result.getSize()).isEqualTo(3);
     }
 
+    @Test
+    public void findAllWithPredicate() {
+        QStudent student = QStudent.student;
+        Iterable<Student> students = studentRepository.findAll(student.age.between(20, 25).and(student.name.contains("code")));
+        for (Student s : students) {
+            System.out.println("s = " + s);
+        }
+        assertThat(students).extracting("name").contains("code");
+    }
 }
